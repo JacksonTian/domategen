@@ -3,6 +3,8 @@
 var program = require('commander');
 var util = require('util');
 var path = require('path');
+var fs = require('fs');
+var ejs = require('ejs');
 var execSync = require('child_process').execSync;
 
 program
@@ -29,9 +31,28 @@ var root = __dirname;
 
 var output = '/Users/jacksontian/git/doxmategen_site';
 
-// clone it
-var clone = 'git clone git://github.com/%s.git %s';
-execSync(util.format(clone, repo, path.join(root, 'repo', repo)));
+var repoDir = path.join(root, 'repo', repo);
+
+var repos = require('./repos.json');
+
+if (!repos[repo]) {
+  repos[repo] = true;
+  fs.writeFileSync('./repos.json', JSON.stringify(repos, null, '  '));
+  var template = fs.readFileSync('./index.html', 'utf8');
+  fs.writeFileSync(path.join(output, 'index.html'), ejs.render(template, {repos: repos}));
+}
+
+if (!fs.existsSync(path.join(repoDir, '.git'))) {
+  // clone it
+  var clone = 'git clone git://github.com/%s.git %s';
+  execSync(util.format(clone, repo, repoDir));
+} else {
+  // pull it
+  var pull = 'git pull';
+  execSync(pull, {
+    cwd: repoDir
+  });
+}
 
 var build = 'doxmate build -o %s';
 execSync(util.format(build, path.join(output, repo)), {
@@ -40,12 +61,13 @@ execSync(util.format(build, path.join(output, repo)), {
 
 // var upload = './bin/qrsync ./qiniu.conf.json';
 // execSync(upload);
-
-var switchToPages = 'git checkout gh-pages';
-execSync(switchToPages, {cwd: output});
-var add = 'git add .';
-execSync(add, {cwd: output});
-var commit = 'git commit -m "update for repo: %s"';
-execSync(commit, {cwd: output});
-var push = 'git push origin gh-pages';
-execSync(push, {cwd: output});
+var status = 'git status';
+var result = execSync(status, {cwd: output, encoding: 'utf8'});
+if (result.indexOf('nothing to commit') === -1) {
+  var add = 'git add .';
+  execSync(add, {cwd: output});
+  var commit = util.format('git commit -m "update for repo: %s"', repo);
+  execSync(commit, {cwd: output});
+  var push = 'git push origin gh-pages';
+  execSync(push, {cwd: output});
+}

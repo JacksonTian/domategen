@@ -1,0 +1,6 @@
+{
+  "JacksonTian/eventproxy": true,
+  "JacksonTian/doxmate": true,
+  "node-webot/wechat": true,
+  "node-webot/wechat-api": true
+}

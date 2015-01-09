@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Document</title>
+</head>
+<body>
+  所有文档项目：
+  <ul>
+  <% Object.keys(repos).forEach(function (repo) { %>
+    <li><a href="<%=repo%>/index.html"><%=repo%></li>
+  <% }); %>
+  </ul>
+</body>
+</html>
