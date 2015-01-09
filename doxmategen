@@ -1,0 +1,51 @@
+#!/usr/bin/env node
+
+var program = require('commander');
+var util = require('util');
+var path = require('path');
+var execSync = require('child_process').execSync;
+
+program
+  .version(require('./package.json').version);
+
+// examples
+program.on('--help', function () {
+  console.log('  Commands:');
+  console.log('');
+  console.log('    build         create a api docs');
+  console.log('    theme         custom theme');
+  process.exit();
+});
+
+// parse argv
+program.parse(process.argv);
+
+// args void of cmd
+var args = process.argv.slice(2);
+
+var repo = args[0];
+
+var root = __dirname;
+
+var output = '/Users/jacksontian/git/doxmategen_site';
+
+// clone it
+var clone = 'git clone git://github.com/%s.git %s';
+execSync(util.format(clone, repo, path.join(root, 'repo', repo)));
+
+var build = 'doxmate build -o %s';
+execSync(util.format(build, path.join(output, repo)), {
+  cwd: path.join(root, 'repo', repo)
+});
+
+// var upload = './bin/qrsync ./qiniu.conf.json';
+// execSync(upload);
+
+var switchToPages = 'git checkout gh-pages';
+execSync(switchToPages, {cwd: output});
+var add = 'git add .';
+execSync(add, {cwd: output});
+var commit = 'git commit -m "update for repo: %s"';
+execSync(commit, {cwd: output});
+var push = 'git push origin gh-pages';
+execSync(push, {cwd: output});
