@@ -1,31 +1,21 @@
 #!/usr/bin/env node
 
-var program = require('commander');
 var util = require('util');
 var path = require('path');
 var fs = require('fs');
 var ejs = require('ejs');
 var execSync = require('child_process').execSync;
 
-program
-  .version(require('./package.json').version);
-
-// examples
-program.on('--help', function () {
-  console.log('  Commands:');
-  console.log('');
-  console.log('    build         create a api docs');
-  console.log('    theme         custom theme');
-  process.exit();
-});
-
-// parse argv
-program.parse(process.argv);
-
 // args void of cmd
 var args = process.argv.slice(2);
 
 var repo = args[0];
+
+if (!repo) {
+  console.log('Usage: doxmategen <username/repository>');
+  console.log('\teg. doxmategen JacksonTian/doxmate');
+  process.exit(0);
+}
 
 var root = __dirname;
 
@@ -37,7 +27,7 @@ var repos = require('./repos.json');
 
 if (!repos[repo]) {
   repos[repo] = true;
-  fs.writeFileSync('./repos.json', JSON.stringify(repos, null, '  '));
+  fs.writeFileSync('./repos.json', JSON.stringify(repos, null, 2));
   var template = fs.readFileSync('./index.html', 'utf8');
   fs.writeFileSync(path.join(output, 'index.html'), ejs.render(template, {repos: repos}));
 }

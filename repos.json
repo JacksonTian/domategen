@@ -2,5 +2,14 @@
   "JacksonTian/eventproxy": true,
   "JacksonTian/doxmate": true,
   "node-webot/wechat": true,
-  "node-webot/wechat-api": true
+  "node-webot/wechat-api": true,
+  "node-webot/wechat-enterprise": true,
+  "node-webot/wechat-enterprise-api": true,
+  "node-webot/wechat-oauth": true,
+  "node-webot/wechat-crypto": true,
+  "node-webot/co-wechat-api": true,
+  "node-webot/co-wechat": true,
+  "nick-ma/zhisiyun-mobile": true,
+  "geekplux/wiki": true,
+  "JacksonTian/fks": true
 }
