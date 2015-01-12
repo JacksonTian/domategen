@@ -9,6 +9,7 @@
   "author": "Jackson Tian",
   "license": "MIT",
   "dependencies": {
-    "ejs": "^2.0.8"
+    "ejs": "^2.0.8",
+    "ncp": "^1.0.1"
   }
 }

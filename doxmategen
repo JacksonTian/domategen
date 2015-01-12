@@ -4,6 +4,7 @@ var util = require('util');
 var path = require('path');
 var fs = require('fs');
 var ejs = require('ejs');
+var ncp = require('ncp');
 var execSync = require('child_process').execSync;
 
 // args void of cmd
@@ -25,12 +26,18 @@ var repoDir = path.join(root, 'repo', repo);
 
 var repos = require('./repos.json');
 
-if (!repos[repo]) {
-  repos[repo] = true;
-  fs.writeFileSync('./repos.json', JSON.stringify(repos, null, 2));
-  var template = fs.readFileSync('./index.html', 'utf8');
-  fs.writeFileSync(path.join(output, 'index.html'), ejs.render(template, {repos: repos}));
-}
+var buildHomePage = function () {
+  if (!repos[repo]) {
+    repos[repo] = true;
+    fs.writeFileSync('./repos.json', JSON.stringify(repos, null, 2));
+    var template = fs.readFileSync('./index.html', 'utf8');
+    fs.writeFileSync(path.join(output, 'index.html'), ejs.render(template, {repos: repos}));
+  }
+
+  ncp(path.join(__dirname + '/assets'), path.join(output, 'assets'), function () {});
+};
+
+buildHomePage();
 
 if (!fs.existsSync(path.join(repoDir, '.git'))) {
   // clone it
@@ -49,8 +56,6 @@ execSync(util.format(build, path.join(output, repo)), {
   cwd: path.join(root, 'repo', repo)
 });
 
-// var upload = './bin/qrsync ./qiniu.conf.json';
-// execSync(upload);
 var status = 'git status';
 var result = execSync(status, {cwd: output, encoding: 'utf8'});
 if (result.indexOf('nothing to commit') === -1) {
