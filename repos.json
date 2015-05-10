@@ -11,5 +11,7 @@
   "node-webot/co-wechat": true,
   "nick-ma/zhisiyun-mobile": true,
   "geekplux/wiki": true,
-  "JacksonTian/fks": true
+  "JacksonTian/fks": true,
+  "tj/dox": true,
+  "JacksonTian/loader": true
 }
